@@ -261,8 +261,10 @@ def load_image():
 	elif config.genre == 'avto' or config.genre in genre_avto:
 		image_url_substring = 'https://avto.goodfon.ru/'
 	else:
-		image_url_substring = "https://www.goodfon.ru/wallpaper/"
+		image_url_substring = "https://www.goodfon.ru/"
 	
+	#print(goodwalls)
+
 	find_image = re.compile(image_url_substring + "[a-zA-Z0-9/-]*\.html")
 	for im in find_image.finditer(goodwalls):
 		image_urls.append(im.group())
@@ -284,20 +286,26 @@ def load_image():
 	#get images tags
 	wall_tags = get_tags(image_urls[wall_choice])
 	
+	print("URL: ", image_urls[wall_choice])
 	goodwalls = urllib.request.urlopen(image_urls[wall_choice]).read().decode('utf-8')
 	
-	pos = goodwalls.find("Скачать оригинал:", 0)
-	pos = goodwalls.find("/download/", pos)
+	pos = goodwalls.find("Скачать оригинал", 0)
+	pos = goodwalls.find("href=", pos)
 	result_image_url = ""
 	i = 0
 	if pos != -1:
-		while goodwalls[pos + i] != '"':
+		while goodwalls[pos + i] != '.':
 			result_image_url += goodwalls[pos + i]
 			i+=1
 	else:
 		print("Do not find image link")
 		sys.exit(0)
-	#custom resolution
+
+	result_image_url += ".html"
+	result_image_url = result_image_url[5:]
+	#print(result_image_url)
+	#sys.exit(0)
+	#custom resolution TODO: delete it, easy resize by opencv or pillow
 	if config.resolution == "original":
 		pass
 	else:
@@ -318,7 +326,7 @@ def load_image():
 		result_image_url = "https://avto.goodfon.ru" + result_image_url
 	else:
 		result_image_url = "https://www.goodfon.ru" + result_image_url
-	#print("IMAGE",result_image_url)
+	#print("IMAGE: ", result_image_url)
 	
 	goodwalls = urllib.request.urlopen(result_image_url).read().decode('utf-8')
 	pos = goodwalls.find('нажмите на картинку', 0)
@@ -327,13 +335,14 @@ def load_image():
 	result_image_url = ""
 	i = 0
 	if pos != -1:
-		while goodwalls[pos + i] != '"':
+		while goodwalls[pos + i] != '>':
 			result_image_url += goodwalls[pos + i]
 			i+=1
 	else:
 		print("Do not find image link")
 		sys.exit(0)
 	
+	print("Image: ", result_image_url)
 	res = urllib.request.urlopen(result_image_url).read()
 	f = open(config.name, "wb")
 	f.write(res)
