@@ -1,8 +1,10 @@
-# random wallpaper
+# Random wallpaper
 
-Download random wallpaper from goodfon.ru
+Download random wallpaper from [goodfon.ru](goodfon.ru)
 
-optional arguments:
+Use **wall.py -h** for get app information
+
+Optional arguments:
   - -h, --help            show this help message and exit
   - -b, --blur            add blur effect
   - -g GENRE, --genre GENREset genre: 
